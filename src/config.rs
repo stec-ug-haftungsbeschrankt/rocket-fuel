@@ -53,7 +53,7 @@ impl Configuration {
         let mut file = File::open(path)?;
         let mut contents = String::new();
         file.read_to_string(&mut contents)?;    
-        println!("Using {} configuration", path);            
+        info!("Using {} configuration", path);            
         Ok(contents)     
     }
 }
