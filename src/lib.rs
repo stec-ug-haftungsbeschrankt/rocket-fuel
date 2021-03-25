@@ -28,7 +28,7 @@ use rocket::config::{Config, ConfigError, Environment};
 use rocket_contrib::serve::StaticFiles;
 
 pub fn build_static_files() -> StaticFiles {
-    let static_path = format!("{}/static", get_app_base_path());
+    let static_path = format!("../{}/static", get_app_base_path());
     StaticFiles::from(static_path)
 }
 
