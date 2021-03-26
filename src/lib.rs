@@ -83,8 +83,8 @@ pub fn cli_handler(title: &str) -> ArgMatches<'static> {
 use translations::Translations;
 
 
-pub fn initialize_translations(section: &str) -> Translations {
-    let path = format!("{}/i18n/{}/", get_app_base_path(), section);
+pub fn initialize_translations() -> Translations {
+    let path = format!("{}/i18n/", get_app_base_path());
     
     let translations = Translations::new(&path);
     translations.unwrap()
