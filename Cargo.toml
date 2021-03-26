@@ -27,3 +27,4 @@ block-modes = "0.7.0"
 hex = "0.4.3"
 
 sendgrid = "0.17.0"
+image-convert = "0.10.2"

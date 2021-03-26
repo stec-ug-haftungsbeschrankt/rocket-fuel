@@ -1,10 +1,14 @@
+#![feature(proc_macro_hygiene, decl_macro)]
+
 #[macro_use] extern crate serde_derive;
 extern crate diesel;
 #[macro_use] extern crate log;
+#[macro_use] extern crate rocket;
 
 pub mod config;
 pub mod contexts;
 pub mod email;
+pub mod images;
 pub mod translations;
 pub mod tokens;
 pub mod service_error;
