@@ -22,8 +22,7 @@ impl ServiceError {
 
 impl fmt::Display for ServiceError {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        let output = format!("{} - {}", self.status_code, self.message);
-        f.write_str(&output)
+        write!(f, "{} - {}", self.status_code, self.message)
     }
 }
 
@@ -38,9 +37,3 @@ impl From<DieselError> for ServiceError {
     }
 }
 
-
-impl Into<String> for ServiceError {
-    fn into(self) -> String {
-        format!("{} - {}", self.status_code, self.message)
-    }
-}
