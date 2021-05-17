@@ -37,3 +37,9 @@ impl From<DieselError> for ServiceError {
     }
 }
 
+impl From<rusqlite::Error> for ServiceError {
+    fn from(error: rusqlite::Error) -> ServiceError {
+        ServiceError::new(400,error.to_string())
+    }
+}
+
