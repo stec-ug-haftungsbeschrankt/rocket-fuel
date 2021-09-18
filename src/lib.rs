@@ -3,6 +3,7 @@ extern crate diesel;
 #[macro_use] extern crate log;
 #[macro_use] extern crate rocket;
 
+pub mod auth;
 pub mod config;
 pub mod contexts;
 pub mod email;
