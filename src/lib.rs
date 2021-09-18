@@ -1,5 +1,3 @@
-#![feature(proc_macro_hygiene, decl_macro)]
-
 #[macro_use] extern crate serde_derive;
 extern crate diesel;
 #[macro_use] extern crate log;
@@ -28,33 +26,14 @@ pub fn get_app_base_path() -> &'static str {
  * Rocket
  */
 
-use rocket::config::{Config, ConfigError, Environment};
-use rocket_contrib::serve::StaticFiles;
+use rocket::{fs::FileServer};
 
-pub fn build_static_files() -> StaticFiles {
+
+pub fn build_static_files() -> FileServer {
     let static_path = format!("{}/static", get_app_base_path());
-    StaticFiles::from(static_path)
+    FileServer::from(static_path)
 }
 
-
-pub fn build_rocket_config(port: u16) -> Result<Config, ConfigError> {
-    let rocket_config = if cfg!(debug_assertions) {
-        Config::build(Environment::Development)
-            .port(port)
-            .finalize()
-    } else {
-        let template_dir = format!("{}/templates", get_app_base_path());
-        let assets_dir = format!("{}/assets", get_app_base_path());
-
-        Config::build(Environment::Production)
-            .extra("template_dir", template_dir)
-            .extra("assets_dir", assets_dir)
-            .address("0.0.0.0")
-            .port(port)
-            .finalize()
-    };
-    rocket_config
-}
 
 
 
@@ -84,6 +63,8 @@ pub fn cli_handler(title: &str) -> ArgMatches<'static> {
  * Translations
  */
 
+
+use serde_json::Value;
 use translations::Translations;
 
 
@@ -101,7 +82,7 @@ pub fn initialize_translations() -> Translations {
  */
 
 use std::collections::HashMap;
-use rocket_contrib::templates::tera::{self, Value};
+use rocket_dyn_templates::tera;
 
 
 

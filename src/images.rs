@@ -3,8 +3,9 @@ use std::path::Path;
 
 
 use rocket::State;
+use rocket::fs::NamedFile;
 use rocket::response::status::NotFound;
-use rocket::response::NamedFile;
+
 
 /*
  * Images and Image manilulation
@@ -16,7 +17,7 @@ use image_convert::{ImageResource, JPGConfig, to_jpg};
 
 // e.g. http://localhost:9000/images/ART-10001/IMG_1967_1000.JPG
 #[get("/images/<product>/<image>/<width>")]
-pub fn get_product_image(config: State<GeneralConfig>, product: String, image: String, width: u16) -> Result<NamedFile, NotFound<String>> {
+pub async fn get_product_image(config: &State<GeneralConfig>, product: String, image: String, width: u16) -> Result<NamedFile, NotFound<String>> {
    let source = Path::new(&config.data_path).join(&product).join("Images").join(&image);
    let destination_file = format!("/tmp/{}_{}_{}", &product, width, &image);
    let destination = Path::new(&destination_file);
@@ -27,7 +28,7 @@ pub fn get_product_image(config: State<GeneralConfig>, product: String, image: S
        }
        image_resize_to_width(&source, &destination, width);
    }
-   NamedFile::open(&destination).map_err(|e| NotFound(e.to_string()))
+   NamedFile::open(&destination).await.map_err(|e| NotFound(e.to_string()))
 }
 
 
