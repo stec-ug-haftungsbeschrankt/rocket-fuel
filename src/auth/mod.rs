@@ -1,3 +1,4 @@
+use async_trait::async_trait;
 use rocket::{Error, http::CookieJar, request, response::Debug, response::Redirect};
 use rocket_oauth2::{OAuth2, TokenResponse};
 
@@ -7,13 +8,18 @@ mod google;
 mod keycloak;
 mod microsoft;
 
+trait UserInfo {
 
-trait Auth<T> {
+}
+
+
+#[async_trait]
+trait Auth<T: UserInfo> {
     fn login(oauth2: OAuth2<T>, cookies: &CookieJar<'_>) -> Redirect;
 
     fn logout(oauth2: OAuth2<T>, cookies: &CookieJar<'_>) -> Redirect;
 
-    fn callback(token: TokenResponse<T>, cookies: &CookieJar<'_>) -> Result<Redirect, Debug<Error>>;
+    async fn callback(token: TokenResponse<T>, cookies: &CookieJar<'_>) -> Result<Redirect, Debug<anyhow::Error>>;
 
     fn register(oauth2: OAuth2<T>, cookies: &CookieJar<'_>) -> Redirect;
 }
