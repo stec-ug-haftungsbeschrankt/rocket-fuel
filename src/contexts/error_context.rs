@@ -11,9 +11,9 @@ pub struct CatchContext {
 }
 
 impl CatchContext {
-    pub fn new(path: String, config: State<GeneralConfig>) -> CatchContext {
+    pub fn new(path: String, config: &State<GeneralConfig>) -> CatchContext {
         CatchContext {
-            base: BaseContext::new("404 Error", &config),
+            base: BaseContext::new("404 Error", config),
             path
         }
     }
