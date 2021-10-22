@@ -86,8 +86,7 @@ use std::collections::HashMap;
 use rocket_dyn_templates::tera;
 
 
-
-pub fn prettify_currency(value: Value, _: HashMap<String, Value>) -> tera::Result<Value> {
+pub fn prettify_currency(value: &Value, _: &HashMap<String, Value>) -> tera::Result<Value> {
     let key = match value.as_str() {
         Some(s) => s,
         _ => panic!("Error during translation")

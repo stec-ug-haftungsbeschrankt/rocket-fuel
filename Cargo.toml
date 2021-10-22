@@ -1,6 +1,6 @@
 [package]
 name = "rocket-fuel"
-version = "0.1.0"
+version = "0.1.1"
 authors = ["Stefan Schick <stefan.schick@stecug.de>"]
 edition = "2018"
 description = "Fuel to speed up the development of rocket web apps"
