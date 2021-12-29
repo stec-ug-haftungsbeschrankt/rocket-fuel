@@ -1,3 +1,5 @@
+#![feature(try_trait_v2)]
+
 #[macro_use] extern crate serde_derive;
 extern crate diesel;
 #[macro_use] extern crate log;

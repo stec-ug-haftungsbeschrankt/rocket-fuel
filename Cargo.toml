@@ -2,7 +2,7 @@
 name = "rocket-fuel"
 version = "0.1.1"
 authors = ["Stefan Schick <stefan.schick@stecug.de>"]
-edition = "2018"
+edition = "2021"
 description = "Fuel to speed up the development of rocket web apps"
 readme = "README.md"
 
@@ -14,6 +14,7 @@ rocket_dyn_templates = { version = "0.1.0-rc.1", features = ["tera"] }
 rocket_oauth2 = "0.5.0-rc.1"
 diesel = { version = "1.4.5", features = ["postgres", "r2d2", "uuidv07", "chrono"] }
 rusqlite = "0.25.0"
+sea-orm = { version = "0.4.2", features = ["sqlx-postgres", "runtime-tokio-rustls" , "mock"] }
 
 uuid = { version = "0.8.2", features = ["serde", "v4"]}
 clap = "2.33.3"
@@ -35,3 +36,4 @@ image-convert = { git = "https://github.com/stec-ug-haftungsbeschrankt/image-con
 reqwest = { version = "0.11.3", features = ["blocking", "json"] }
 anyhow = "1.0"
 async-trait = "0.1.51"
+

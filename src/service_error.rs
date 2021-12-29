@@ -1,5 +1,5 @@
 use serde::Deserialize;
-use std::fmt;
+use std::{fmt, ops::FromResidual, convert::Infallible};
 use diesel::result::Error as DieselError;
 
 
@@ -43,3 +43,12 @@ impl From<rusqlite::Error> for ServiceError {
     }
 }
 
+
+impl FromResidual<Result<Infallible, sea_orm::DbErr>> for ServiceError {
+    fn from_residual(residual: Result<Infallible, sea_orm::DbErr>) -> Self {
+        match residual {
+            Ok(r) => ServiceError::new(200,r.to_string()),
+            Err(e) => ServiceError::new(400,e.to_string())
+        }
+    }
+}
