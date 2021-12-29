@@ -1,4 +1,4 @@
-#![feature(try_trait_v2)]
+//#![feature(try_trait_v2)]
 
 #[macro_use] extern crate serde_derive;
 extern crate diesel;
