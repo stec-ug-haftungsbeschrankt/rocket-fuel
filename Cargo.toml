@@ -13,13 +13,10 @@ rocket = { version = "0.5.0-rc.1", features = ["json"] }
 rocket_dyn_templates = { version = "0.1.0-rc.1", features = ["tera"] }
 rocket_oauth2 = "0.5.0-rc.1"
 diesel = { version = "1.4.5", features = ["postgres", "r2d2", "uuidv07", "chrono"] }
-rusqlite = "0.25.0"
-sea-orm = { version = "0.4.2", features = ["sqlx-postgres", "runtime-tokio-rustls" , "mock"] }
 
 uuid = { version = "0.8.2", features = ["serde", "v4"]}
 clap = "2.33.3"
 log = "0.3.9"
-env_logger = "0.8.3"
 
 serde = "1.0.126"
 serde_derive = "1.0.126"

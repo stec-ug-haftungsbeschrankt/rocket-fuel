@@ -38,25 +38,3 @@ impl From<DieselError> for ServiceError {
     }
 }
 
-impl From<rusqlite::Error> for ServiceError {
-    fn from(error: rusqlite::Error) -> ServiceError {
-        ServiceError::new(400,error.to_string())
-    }
-}
-
-impl From<sea_orm::DbErr> for ServiceError {
-    fn from(error: sea_orm::DbErr) -> Self {
-        ServiceError::new(400,error.to_string())
-    }
-}
-
-/*
-impl FromResidual<Result<Infallible, sea_orm::DbErr>> for ServiceError {
-    fn from_residual(residual: Result<Infallible, sea_orm::DbErr>) -> Self {
-        match residual {
-            Ok(r) => ServiceError::new(200,r.to_string()),
-            Err(e) => ServiceError::new(400,e.to_string())
-        }
-    }
-}
-*/
