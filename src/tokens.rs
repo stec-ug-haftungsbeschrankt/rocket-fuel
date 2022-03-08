@@ -1,9 +1,9 @@
+use aes_gcm_siv::Aes256GcmSiv;
+use aes_gcm_siv::aead::{Aead, NewAead};
+use aes_gcm_siv::aead::generic_array::GenericArray;
+
 use uuid::Uuid;
 use std::convert::TryInto;
-
-use aes::Aes128;
-use block_modes::{BlockMode, Cbc};
-use block_modes::block_padding::Pkcs7;
 
 
 pub trait Tokens {
@@ -17,11 +17,51 @@ pub trait Tokens {
 }
 
 
-
 pub struct TokenService {
-    key: [u8; 16], 
-    iv: [u8; 16]
+    key: [u8; 32],
+    nonce: [u8; 12],
 }
+
+impl TokenService {
+    pub fn new(key_input: & str, nonce_input: &str) -> Self {
+        let key = TokenService::generate_hex(key_input, 32);
+        let nonce = TokenService::generate_hex(nonce_input, 12);
+
+        TokenService {
+            key: key.try_into().unwrap(),
+            nonce: nonce.try_into().unwrap()
+        }
+    }
+
+    pub fn new_random() -> Self {
+        let key_input = Uuid::new_v4().to_simple().to_string();
+        let nonce_input = Uuid::new_v4().to_simple().to_string();
+
+        let key = TokenService::generate_hex(&key_input, 32);
+        let nonce = TokenService::generate_hex(&nonce_input, 12);
+
+        TokenService {
+            key: key.try_into().unwrap(),
+            nonce: nonce.try_into().unwrap()
+        }
+    }
+
+    pub fn encrypt(&self, plaintext: &str) -> String {
+        let cipher = Aes256GcmSiv::new(GenericArray::from_slice(&self.key));
+        let ciphertext = cipher.encrypt(GenericArray::from_slice(&self.nonce), plaintext.as_bytes())
+            .expect("encryption failure!");
+        hex::encode(&ciphertext)
+    }
+
+    pub fn decrypt(&self, ciphertext: &str) -> String {
+        let cipher = Aes256GcmSiv::new(GenericArray::from_slice(&self.key));
+        let encrypted_data: Vec<u8> = hex::decode(ciphertext).unwrap();
+        let plaintext = cipher.decrypt(GenericArray::from_slice(&self.nonce), encrypted_data.as_slice())
+            .expect("decryption failure!");
+        String::from_utf8(plaintext).unwrap()
+    }
+}
+
 
 impl TokenService {
     fn generate_hex(input: &str, count: usize) -> Vec<u8> {
@@ -29,7 +69,7 @@ impl TokenService {
         let raw = input.as_bytes();
 
         for x in 0..count {
-            let index = x % raw.len(); 
+            let index = x % raw.len();
             let c = raw[index];
             result.push(c);
         }
@@ -37,52 +77,10 @@ impl TokenService {
     }
 }
 
-type Aes128Cbc = Cbc<Aes128, Pkcs7>;
-
-impl Tokens for TokenService {
-    
-    fn new(key_input: &str, iv_input: &str) -> Self { 
-        let key = TokenService::generate_hex(&key_input, 16);
-        let iv = TokenService::generate_hex(&iv_input, 16);
-
-        TokenService { 
-            key: key.try_into().unwrap(), 
-            iv: iv.try_into().unwrap(), 
-        } 
-    }
-
-    fn new_random() -> Self { 
-        let key_input = Uuid::new_v4().to_simple().to_string();
-        let iv_input = Uuid::new_v4().to_simple().to_string();
-
-        let key = TokenService::generate_hex(&key_input, 16);
-        let iv = TokenService::generate_hex(&iv_input, 16);
- 
-        TokenService { 
-            key: key.try_into().unwrap(), 
-            iv: iv.try_into().unwrap(), 
-        } 
-    }
-    
-    fn encrypt(&self, plaintext: &str) -> String { 
-        let cipher = Aes128Cbc::new_var(&self.key, &self.iv).unwrap();
-        let ciphertext = cipher.encrypt_vec(plaintext.as_bytes());
-
-        hex::encode(&ciphertext)
-    }
-    
-    fn decrypt(&self, ciphertext: &str) -> String { 
-        let cipher = Aes128Cbc::new_var(&self.key, &self.iv).unwrap();
-        let encrypted_data: Box<[u8]> = hex::decode(ciphertext).unwrap().try_into().unwrap();
-        let plaintext = cipher.decrypt_vec(&encrypted_data).unwrap();
-        
-        String::from_utf8(plaintext).unwrap()
-    }
-}
 
 
 #[cfg(test)]
-mod tests {
+mod token_service_tests {
     use super::*;
 
     #[test]
@@ -109,20 +107,19 @@ mod tests {
 
     #[test]
     fn test_raw() {
-        let key = hex::decode("000102030405060708090a0b0c0d0e0f").unwrap();
-        let iv = hex::decode("f0f1f2f3f4f5f6f7f8f9fafbfcfdfeff").unwrap();
+        let key = Key::from_slice(b"000102030405060708090a0b0c0d0e0f");
+        let nonce = Nonce::from_slice(b"f9fafbfcfdfe");
 
-        let plaintext = b"Hello world!";
- 
-        let cipher = Aes128Cbc::new_var(&key, &iv).unwrap();
-        let ciphertext = cipher.encrypt_vec(plaintext);
+        let message = b"Hello world!";
 
-        assert_eq!(ciphertext, hex::decode("1b7a4c403124ae2fb52bedc534d82fa8").unwrap());
+        let cipher = Aes256GcmSiv::new(key);
+        let ciphertext = cipher.encrypt(nonce, message.as_ref())
+            .expect("encryption failure!");
 
-        let cipher = Aes128Cbc::new_var(&key, &iv).unwrap();
-        let decrypted_ciphertext = cipher.decrypt_vec(&ciphertext).unwrap();
+        let plaintext = cipher.decrypt(nonce, ciphertext.as_ref())
+            .expect("decryption failure!");
 
-        assert_eq!(decrypted_ciphertext, plaintext);
+        assert_eq!(plaintext, message);
     }
 
 }

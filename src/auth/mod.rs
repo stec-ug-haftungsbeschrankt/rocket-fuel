@@ -1,5 +1,5 @@
 use async_trait::async_trait;
-use rocket::{Error, http::CookieJar, request, response::Debug, response::Redirect};
+use rocket::{http::CookieJar, request, response::Debug, response::Redirect};
 use rocket_oauth2::{OAuth2, TokenResponse};
 
 mod auth0;

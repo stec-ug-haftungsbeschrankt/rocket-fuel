@@ -26,7 +26,7 @@ pub async fn get_product_image(config: &State<GeneralConfig>, product: String, i
        if !source.exists() {
            return Err(NotFound(product));
        }
-       image_resize_to_width(&source, &destination, width);
+       image_resize_to_width(&source, destination, width);
    }
    NamedFile::open(&destination).await.map_err(|e| NotFound(e.to_string()))
 }

@@ -2,7 +2,7 @@
 
 #[macro_use] extern crate serde_derive;
 extern crate diesel;
-#[macro_use] extern crate log;
+extern crate log;
 #[macro_use] extern crate rocket;
 
 pub mod auth;
@@ -16,12 +16,11 @@ pub mod service_error;
 
 
 pub fn get_app_base_path() -> &'static str {
-    let path = if cfg!(debug_assertions) {
+    if cfg!(debug_assertions) {
         "."
     } else {
         "/usr/share/stec_shop"
-    };
-    path
+    }
 }
 
 
@@ -44,15 +43,15 @@ pub fn build_static_files() -> FileServer {
  * Command Line Interface
  */
 
-use clap::{crate_version, crate_authors, crate_description, Arg, App, ArgMatches};
+use clap::{crate_version, crate_authors, crate_description, Arg, ArgMatches, Command};
 
-pub fn cli_handler(title: &str) -> ArgMatches<'static> {
-    App::new(title)
+pub fn cli_handler(title: &str) -> ArgMatches {
+    Command::new(title)
         .version(crate_version!())
         .author(crate_authors!("\n"))
         .about(crate_description!())
-        .arg(Arg::with_name("config")
-            .short("c")
+        .arg(Arg::new("config")
+            .short('c')
             .long("config")
             .value_name("FILE")
             .help("Sets a custom config file")
