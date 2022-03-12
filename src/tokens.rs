@@ -1,4 +1,4 @@
-use aes_gcm_siv::Aes256GcmSiv;
+use aes_gcm_siv::{Aes256GcmSiv, Key, Nonce};
 use aes_gcm_siv::aead::{Aead, NewAead};
 use aes_gcm_siv::aead::generic_array::GenericArray;
 

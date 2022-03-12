@@ -26,8 +26,7 @@ aes-gcm-siv = "0.10"
 hex = "0.4.3"
 
 sendgrid = "0.17.1"
-image-convert = { git = "https://github.com/stec-ug-haftungsbeschrankt/image-convert.git", branch = "magick15" }
-# image-convert = { version = "0.10.4", default-features = false, features = ["none-background", "magick_rust_014"] }
+image = "*"
 
 reqwest = { version = "0.11.3", features = ["blocking", "json"] }
 anyhow = "1.0"
