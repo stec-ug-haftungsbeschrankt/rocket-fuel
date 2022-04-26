@@ -13,7 +13,6 @@ extern crate image;
 
 use image::io::Reader as ImageReader;
 use image::imageops::FilterType;
-use crate::images::image::GenericImageView;
 
 // e.g. http://localhost:9000/images/ART-10001/IMG_1967_1000.JPG
 #[get("/images/<product>/<image>/<width>")]

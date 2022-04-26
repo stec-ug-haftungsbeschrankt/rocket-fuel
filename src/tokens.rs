@@ -1,4 +1,4 @@
-use aes_gcm_siv::{Aes256GcmSiv, Key, Nonce};
+use aes_gcm_siv::Aes256GcmSiv;
 use aes_gcm_siv::aead::{Aead, NewAead};
 use aes_gcm_siv::aead::generic_array::GenericArray;
 
@@ -34,8 +34,8 @@ impl TokenService {
     }
 
     pub fn new_random() -> Self {
-        let key_input = Uuid::new_v4().to_simple().to_string();
-        let nonce_input = Uuid::new_v4().to_simple().to_string();
+        let key_input = Uuid::new_v4().as_simple().to_string();
+        let nonce_input = Uuid::new_v4().as_simple().to_string();
 
         let key = TokenService::generate_hex(&key_input, 32);
         let nonce = TokenService::generate_hex(&nonce_input, 12);
@@ -82,6 +82,7 @@ impl TokenService {
 #[cfg(test)]
 mod token_service_tests {
     use super::*;
+    use aes_gcm_siv::{Key, Nonce};
 
     #[test]
     fn encrypt_decrypt_new_random() {
