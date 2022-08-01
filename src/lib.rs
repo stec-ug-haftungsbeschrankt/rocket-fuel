@@ -9,7 +9,6 @@ pub mod email;
 pub mod images;
 pub mod translations;
 pub mod tokens;
-pub mod service_error;
 
 
 pub fn get_app_base_path() -> &'static str {
