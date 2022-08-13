@@ -1,5 +1,5 @@
-use aes_gcm_siv::Aes256GcmSiv;
-use aes_gcm_siv::aead::{Aead, NewAead};
+use aes_gcm_siv::{Aes256GcmSiv, KeyInit};
+use aes_gcm_siv::aead::Aead;
 use aes_gcm_siv::aead::generic_array::GenericArray;
 
 use uuid::Uuid;
@@ -108,7 +108,7 @@ mod token_service_tests {
 
     #[test]
     fn test_raw() {
-        let key = Key::from_slice(b"000102030405060708090a0b0c0d0e0f");
+        let key = GenericArray::from_slice(b"000102030405060708090a0b0c0d0e0f");
         let nonce = Nonce::from_slice(b"f9fafbfcfdfe");
 
         let message = b"Hello world!";
