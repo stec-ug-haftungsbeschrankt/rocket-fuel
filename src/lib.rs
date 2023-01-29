@@ -33,30 +33,6 @@ pub fn build_static_files() -> FileServer {
 }
 
 
-
-
-/*
- * Command Line Interface
- */
-
-use clap::{crate_version, crate_authors, crate_description, Arg, ArgMatches, Command};
-
-pub fn cli_handler(title: &str) -> ArgMatches {
-    Command::new(title)
-        .version(crate_version!())
-        .author(crate_authors!("\n"))
-        .about(crate_description!())
-        .arg(Arg::new("config")
-            .short('c')
-            .long("config")
-            .value_name("FILE")
-            .help("Sets a custom config file")
-            .takes_value(true))
-        .get_matches()
-}
-
-
-
 /*
  * Translations
  */
