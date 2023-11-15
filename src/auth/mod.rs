@@ -57,7 +57,7 @@ impl<'r> request::FromRequest<'r> for User {
         if let Some(cookie) = cookies.get_private("user") {
             return request::Outcome::Success(User::from(cookie.value().to_string()));
         }
-        request::Outcome::Forward(())
+        request::Outcome::Forward(rocket::http::Status { code: 200 })
     }
 }
 

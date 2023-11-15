@@ -51,9 +51,8 @@ impl Auth<Auth0UserInfo> for Auth0 {
         let data: String = user_info.into();
 
         cookies.add_private(
-            Cookie::build("user", data)
-                .same_site(SameSite::Lax)
-                .finish(),
+            Cookie::build(("user", data))
+                .same_site(SameSite::Lax),
         );
         Ok(Redirect::to("/"))
     }

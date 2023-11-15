@@ -1,4 +1,4 @@
-use anyhow::{Context};
+use anyhow::Context;
 use reqwest::header::{AUTHORIZATION, USER_AGENT};
 use rocket::{http::{Cookie, CookieJar, SameSite}, response::{Debug, Redirect}};
 use rocket_oauth2::{OAuth2, TokenResponse};
@@ -29,7 +29,7 @@ impl Auth<KeycloakUserInfo> for Keycloak {
     }
 
     fn logout(_oauth2: OAuth2<KeycloakUserInfo>, cookies: &CookieJar<'_>) -> Redirect {
-        cookies.remove(Cookie::named("user"));
+        cookies.remove(Cookie::build("user"));
         // Redirect::to("/") FIXME Where does the redirect go
         Redirect::to("https://auth.stecgmbh.de/auth/realms/stec/protocol/openid-connect/logout")
     }
@@ -51,9 +51,8 @@ impl Auth<KeycloakUserInfo> for Keycloak {
         let data: String = user_info.into();
 
         cookies.add_private(
-            Cookie::build("user", data)
+            Cookie::build(("user", data))
                 .same_site(SameSite::Lax)
-                .finish(),
         );
         Ok(Redirect::to("/"))
     }

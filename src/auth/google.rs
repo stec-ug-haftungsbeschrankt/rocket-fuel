@@ -1,5 +1,5 @@
-use anyhow::{Context};
-use reqwest::header::{AUTHORIZATION};
+use anyhow::Context;
+use reqwest::header::AUTHORIZATION;
 use rocket::{http::{Cookie, CookieJar, SameSite}, response::{Debug, Redirect}};
 use rocket_oauth2::{OAuth2, TokenResponse};
 use serde_json::Value;
@@ -57,9 +57,8 @@ impl Auth<GoogleUserInfo> for Google {
 
         // Set a private cookie with the user's name, and redirect to the home page.
         cookies.add_private(
-            Cookie::build("username", real_name.to_string())
+            Cookie::build(("username", real_name.to_string()))
                 .same_site(SameSite::Lax)
-                .finish(),
             );
         Ok(Redirect::to("/"))
     }

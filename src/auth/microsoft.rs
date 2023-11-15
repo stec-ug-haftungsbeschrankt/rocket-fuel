@@ -1,5 +1,5 @@
-use anyhow::{Context};
-use reqwest::header::{AUTHORIZATION};
+use anyhow::Context;
+use reqwest::header::AUTHORIZATION;
 use rocket::{http::{Cookie, CookieJar, SameSite}, response::{Debug, Redirect}};
 use rocket_oauth2::{OAuth2, TokenResponse};
 
@@ -48,9 +48,8 @@ impl Auth<MicrosoftUserInfo> for Microsoft {
 
         // Set a private cookie with the user's name, and redirect to the home page.
         cookies.add_private(
-            Cookie::build("username", user_info.display_name)
+            Cookie::build(("username", user_info.display_name))
                 .same_site(SameSite::Lax)
-                .finish(),
         );
         Ok(Redirect::to("/"))
     }

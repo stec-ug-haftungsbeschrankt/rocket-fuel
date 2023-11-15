@@ -1,4 +1,4 @@
-use anyhow::{Context};
+use anyhow::Context;
 use reqwest::header::{ACCEPT, AUTHORIZATION, USER_AGENT};
 use rocket::{http::{Cookie, CookieJar, SameSite}, response::{Debug, Redirect}};
 use rocket_oauth2::{OAuth2, TokenResponse};
@@ -56,9 +56,8 @@ impl Auth<GitHubUserInfo> for GitHub {
 
         // Set a private cookie with the user's name, and redirect to the home page.
         cookies.add_private(
-            Cookie::build("user", data)
+            Cookie::build(("user", data))
                 .same_site(SameSite::Lax)
-                .finish(),
         );
         Ok(Redirect::to("/"))
     }
