@@ -10,7 +10,7 @@ pub struct SendgridMailProvider {
     api_key: String
 }
 
-
+#[async_trait]
 impl MailProvider for SendgridMailProvider {
     fn new<T: Into<String>>(api_key: T) -> Self {
         SendgridMailProvider {
@@ -18,7 +18,7 @@ impl MailProvider for SendgridMailProvider {
         }
     }
 
-    fn send(&self, email: &Email) -> bool {
+    async fn send(&self, email: &Email) -> bool {
         let sg = SGClient::new(self.api_key.clone());
 
         let mut mail_info = Mail::new()
@@ -46,7 +46,7 @@ impl MailProvider for SendgridMailProvider {
             mail_info = mail_info.add_html(html);
         }   
 
-        match sg.send(mail_info) {
+        match sg.send(mail_info).await {
             Err(err) => {
                 error!("{}", err);
                 false

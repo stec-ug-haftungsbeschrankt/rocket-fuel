@@ -1,6 +1,6 @@
 [package]
 name = "rocket-fuel"
-version = "0.1.4"
+version = "0.1.5"
 authors = ["Stefan Schick <stefan.schick@stecug.de>"]
 edition = "2021"
 description = "Fuel to speed up the development of rocket web apps"
@@ -24,10 +24,10 @@ serde_json = "1.0"
 aes-gcm-siv = "0.11"
 hex = "0.4.3"
 
-sendgrid = { version = "0.19", features = ["rustls"] }
+sendgrid = { version = "0.19", features = ["async", "rustls"] }
 image = "*"
 
-reqwest = { version = "0.11", features = ["blocking", "json"] }
+reqwest = { version = "0.11", features = ["json"] }
 anyhow = "1.0"
 async-trait = "0.1"
 

@@ -56,8 +56,9 @@ impl Email {
 }
 
 
+#[async_trait]
 pub trait MailProvider {
     fn new<T: Into<String>>(api_key: T) -> Self;
 
-    fn send(&self, email: &Email) -> bool;
+    async fn send(&self, email: &Email) -> bool;
 }
