@@ -24,7 +24,7 @@ pub fn get_app_base_path() -> &'static str {
  * Rocket
  */
 
-use rocket::{fs::FileServer};
+use rocket::fs::FileServer;
 
 
 pub fn build_static_files() -> FileServer {
