@@ -1,5 +1,6 @@
 
 use sendgrid::SGClient;
+use sendgrid::v3::{Personalization, Message, Content, Sender};
 use sendgrid::{Destination, Mail};
 
 use crate::email::MailProvider;
@@ -58,3 +59,54 @@ impl MailProvider for SendgridMailProvider {
         }
     }
 }
+
+
+
+
+pub struct SendgridV3MailProvider {
+    api_key: String
+}
+
+#[async_trait]
+impl MailProvider for SendgridV3MailProvider {
+    fn new<T: Into<String>>(api_key: T) -> Self {
+        SendgridV3MailProvider {
+            api_key: api_key.into()
+        }
+    }
+
+    async fn send(&self, email: &Email) -> bool {
+        let recipients: Vec<sendgrid::v3::Email> = email.recipients.iter().map(|r| sendgrid::v3::Email::new(&r.email).set_name(r.name.as_ref().unwrap_or(&"".to_string()))).collect();
+        let mut personalization = Personalization::new(recipients[0].clone());
+    
+        for recipient in &recipients[1..] {
+            personalization = personalization.add_to(recipient.clone());
+        }
+    
+        let message = Message::new(sendgrid::v3::Email::new(&email.sender.email).set_name(email.sender.name.as_ref().unwrap()))
+            .set_subject(&email.subject)
+            .add_content(
+                Content::new()
+                    .set_content_type("text/html")
+                    .set_value(email.html.as_ref().unwrap()),
+            )
+            .add_personalization(personalization);
+    
+        let sender = Sender::new(self.api_key.clone());
+        let response = sender.send(&message).await;
+
+        match response {
+            Err(err) => {
+                error!("{}", err);
+                false
+            },
+            Ok(body) => {
+                debug!("{:?}", body);
+                true
+            }
+        }
+    }
+}
+
+
+
