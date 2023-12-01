@@ -1,6 +1,6 @@
 [package]
 name = "rocket-fuel"
-version = "0.1.5"
+version = "0.1.6"
 authors = ["Stefan Schick <stefan.schick@stecug.de>"]
 edition = "2021"
 description = "Fuel to speed up the development of rocket web apps"
@@ -11,7 +11,7 @@ readme = "README.md"
 [dependencies]
 rocket = { version = "0.5.0", features = ["json"] }
 rocket_dyn_templates = { version = "0.1.0", features = ["tera"] }
-rocket_oauth2 = "0.5.0-rc.3"
+rocket_oauth2 = "0.5.0"
 
 uuid = { version = "1.0", features = ["serde", "v4"] }
 clap = { version = "4.1", features = ["cargo"] }
