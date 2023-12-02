@@ -19,4 +19,13 @@ impl BaseContext {
             version: crate_version!()
         }
     }
+
+    pub fn new_raw(page_title: String, application_title: String, language: String) -> BaseContext {
+        BaseContext {
+            page_title,
+            application_title,
+            language,
+            version: crate_version!()
+        }
+    }
 }
