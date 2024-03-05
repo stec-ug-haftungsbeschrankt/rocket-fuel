@@ -16,14 +16,14 @@ use image::imageops::FilterType;
 
 // e.g. http://localhost:9000/images/ART-10001/IMG_1967_1000.JPG
 #[get("/images/<product>/<image>/<width>")]
-pub async fn get_product_image(config: &State<GeneralConfig>, product: String, image: String, width: u32) -> Result<NamedFile, NotFound<String>> {
+pub async fn get_product_image(config: &State<GeneralConfig>, product: &str, image: &str, width: u32) -> Result<NamedFile, NotFound<String>> {
     let source = Path::new(&config.data_path).join(&product).join("Images").join(&image);
     let destination_file = format!("/tmp/{}_{}_{}", &product, width, &image);
     let destination = Path::new(&destination_file);
 
     if !destination.exists() {
         if !source.exists() {
-            return Err(NotFound(product));
+            return Err(NotFound(product.to_string()));
         }
         image_resize_to_width(&source, destination, width);
     }
