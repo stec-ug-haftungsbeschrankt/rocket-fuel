@@ -13,7 +13,7 @@ pub trait Tokens {
 
     fn encrypt(&self, plaintext: &str) -> String;
 
-    fn decrypt(&self, ciphertext: &str) -> String;
+    fn decrypt(&self, ciphertext: &str) -> Result<String, String>;
 }
 
 
@@ -53,12 +53,19 @@ impl TokenService {
         hex::encode(&ciphertext)
     }
 
-    pub fn decrypt(&self, ciphertext: &str) -> String {
+    /// Decrypts a hex-encoded ciphertext produced by [`encrypt`](Self::encrypt).
+    ///
+    /// Returns `Err` instead of panicking for malformed/tampered input, since
+    /// `ciphertext` is typically attacker-controlled (e.g. a token read from
+    /// a request query parameter) and any of hex-decoding, AEAD
+    /// authentication, or UTF-8 validation can fail on garbage input.
+    pub fn decrypt(&self, ciphertext: &str) -> Result<String, String> {
         let cipher = Aes256GcmSiv::new(GenericArray::from_slice(&self.key));
-        let encrypted_data: Vec<u8> = hex::decode(ciphertext).unwrap();
+        let encrypted_data: Vec<u8> = hex::decode(ciphertext)
+            .map_err(|e| format!("Invalid token encoding: {}", e))?;
         let plaintext = cipher.decrypt(GenericArray::from_slice(&self.nonce), encrypted_data.as_slice())
-            .expect("decryption failure!");
-        String::from_utf8(plaintext).unwrap()
+            .map_err(|_| String::from("Failed to decrypt token"))?;
+        String::from_utf8(plaintext).map_err(|e| format!("Decrypted token is not valid UTF-8: {}", e))
     }
 }
 
@@ -90,7 +97,7 @@ mod token_service_tests {
         let token_service = TokenService::new_random();
 
         let encrypted = token_service.encrypt(plaintext);
-        let decrypted = token_service.decrypt(&encrypted);
+        let decrypted = token_service.decrypt(&encrypted).expect("test fixture: decrypt should succeed");
 
         assert_eq!(plaintext, decrypted);
     }
@@ -101,9 +108,37 @@ mod token_service_tests {
         let token_service = TokenService::new("some key", "some iv");
 
         let encrypted = token_service.encrypt(plaintext);
-        let decrypted = token_service.decrypt(&encrypted);
+        let decrypted = token_service.decrypt(&encrypted).expect("test fixture: decrypt should succeed");
 
         assert_eq!(plaintext, decrypted);
+    }
+
+    #[test]
+    fn decrypt_rejects_non_hex_input_instead_of_panicking() {
+        let token_service = TokenService::new_random();
+
+        assert!(token_service.decrypt("not-valid-hex!!").is_err());
+    }
+
+    #[test]
+    fn decrypt_rejects_tampered_ciphertext_instead_of_panicking() {
+        let token_service = TokenService::new_random();
+        let encrypted = token_service.encrypt("Hello world!");
+
+        let mut tampered = hex::decode(&encrypted).expect("test fixture: should be valid hex");
+        if let Some(first_byte) = tampered.first_mut() {
+            *first_byte ^= 0xFF;
+        }
+        let tampered_hex = hex::encode(tampered);
+
+        assert!(token_service.decrypt(&tampered_hex).is_err());
+    }
+
+    #[test]
+    fn decrypt_rejects_arbitrary_hex_garbage_instead_of_panicking() {
+        let token_service = TokenService::new_random();
+
+        assert!(token_service.decrypt("deadbeef").is_err());
     }
 
     #[test]
