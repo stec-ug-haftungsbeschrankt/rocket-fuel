@@ -2,9 +2,12 @@
 name = "rocket-fuel"
 version = "0.1.7"
 authors = ["Stefan Schick <stefan.schick@stecug.de>"]
+license = "GPL-3.0-or-later"
+readme = "README.md"
+homepage = "https://stecug.de"
+repository = "https://github.com/stec-ug-haftungsbeschrankt/rocket-fuel"
 edition = "2024"
 description = "Fuel to speed up the development of rocket web apps"
-readme = "README.md"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
