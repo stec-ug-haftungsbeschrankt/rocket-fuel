@@ -20,7 +20,7 @@ impl MailProvider for SendgridMailProvider {
     }
 
     async fn send(&self, email: &Email) -> bool {
-        let sg = SGClient::new(self.api_key.clone());
+        let sg = SGClient::new(&self.api_key);
 
         let mut mail_info = Mail::new()
             .add_from(&email.sender.email)
@@ -76,7 +76,7 @@ impl MailProvider for SendgridV3MailProvider {
     }
 
     async fn send(&self, email: &Email) -> bool {
-        let recipients: Vec<sendgrid::v3::Email> = email.recipients.iter().map(|r| sendgrid::v3::Email::new(&r.email).set_name(r.name.as_ref().unwrap_or(&"".to_string()))).collect();
+        let recipients: Vec<sendgrid::v3::Email> = email.recipients.iter().map(|r| sendgrid::v3::Email::new(&r.email).set_name(r.name.as_deref().unwrap_or(""))).collect();
         let mut personalization = Personalization::new(recipients[0].clone());
     
         for recipient in &recipients[1..] {
@@ -92,7 +92,7 @@ impl MailProvider for SendgridV3MailProvider {
             )
             .add_personalization(personalization);
     
-        let sender = Sender::new(self.api_key.clone());
+        let sender = Sender::new(&self.api_key, None);
         let response = sender.send(&message).await;
 
         match response {

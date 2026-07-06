@@ -11,7 +11,7 @@ use rocket::response::status::NotFound;
  */
 extern crate image;
 
-use image::io::Reader as ImageReader;
+use image::ImageReader;
 use image::imageops::FilterType;
 
 // e.g. http://localhost:9000/images/ART-10001/IMG_1967_1000.JPG
