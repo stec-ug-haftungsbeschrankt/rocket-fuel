@@ -27,7 +27,7 @@ hex = "0.4.3"
 sendgrid = { version = "0.27", features = ["async", "rustls"] }
 image = "*"
 
-reqwest = { version = "0.11", features = ["json"] }
+reqwest = { version = "0.13", features = ["json"] }
 anyhow = "1.0"
 async-trait = "0.1"
 
